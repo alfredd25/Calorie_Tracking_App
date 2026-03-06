@@ -6,3 +6,7 @@ alembic
 pydantic
 python-dotenv
 redis
+
+passlib[bcrypt]
+python-jose
+python-multipart
