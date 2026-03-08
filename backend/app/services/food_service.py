@@ -1,6 +1,5 @@
 import json
 from app.core.redis_client import redis_client
-from app.repositories.food_repository import search_foods, search_foods_trigram
 from app.repositories.food_repository import search_foods, search_foods_trigram, autocomplete_foods
 
 CACHE_TTL = 1800

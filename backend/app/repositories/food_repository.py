@@ -35,3 +35,7 @@ def autocomplete_foods(db: Session, query: str):
     """)
     result = db.execute(sql, {"query": f"{query}%"})
     return result.fetchall()
+
+def get_food_by_id(db: Session, food_id: int):
+    from app.models.food import Food
+    return db.query(Food).filter(Food.id == food_id).first()

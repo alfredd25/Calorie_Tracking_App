@@ -1,10 +1,12 @@
 from logging.config import fileConfig
 from app.core.database import Base, DATABASE_URL
-import app.models.user
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
+import app.models.user
 import app.models.food
-
+import app.models.meal
+import app.models.meal_item
+import app.models.daily_summary
 from alembic import context
 
 # this is the Alembic Config object, which provides
