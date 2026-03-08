@@ -3,6 +3,7 @@ from app.core.database import Base, DATABASE_URL
 import app.models.user
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
+import app.models.food
 
 from alembic import context
 
