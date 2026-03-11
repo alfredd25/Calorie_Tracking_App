@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, Date, Float, ForeignKey
 from app.core.database import Base
 
+
 class DailySummary(Base):
     __tablename__ = "daily_summaries"
 

@@ -6,20 +6,16 @@ from app.models.daily_summary import DailySummary
 
 
 def create_meal(db: Session, user_id: int, date, meal_type: str):
-    existing_meal = db.query(Meal).filter_by(
-        user_id=user_id,
-        date=date,
-        meal_type=meal_type
-    ).first()
+    existing_meal = (
+        db.query(Meal)
+        .filter_by(user_id=user_id, date=date, meal_type=meal_type)
+        .first()
+    )
 
     if existing_meal:
         return existing_meal
 
-    meal = Meal(
-        user_id=user_id,
-        date=date,
-        meal_type=meal_type
-    )
+    meal = Meal(user_id=user_id, date=date, meal_type=meal_type)
     db.add(meal)
     db.commit()
     db.refresh(meal)
@@ -34,7 +30,7 @@ def add_meal_item(db: Session, meal_id: int, food, quantity: float):
         calories=food.calories * quantity,
         protein=food.protein * quantity,
         carbs=food.carbs * quantity,
-        fat=food.fat * quantity
+        fat=food.fat * quantity,
     )
     db.add(meal_item)
     db.commit()
@@ -42,7 +38,8 @@ def add_meal_item(db: Session, meal_id: int, food, quantity: float):
 
 
 def update_daily_summary(db: Session, user_id: int, date):
-    totals = db.execute(text("""
+    totals = db.execute(
+        text("""
         SELECT
             SUM(mi.calories) as calories,
             SUM(mi.protein) as protein,
@@ -52,12 +49,11 @@ def update_daily_summary(db: Session, user_id: int, date):
         JOIN meals m ON mi.meal_id = m.id
         WHERE m.user_id = :user_id
         AND m.date = :date
-    """), {"user_id": user_id, "date": date}).fetchone()
+    """),
+        {"user_id": user_id, "date": date},
+    ).fetchone()
 
-    existing = db.query(DailySummary).filter_by(
-        user_id=user_id,
-        date=date
-    ).first()
+    existing = db.query(DailySummary).filter_by(user_id=user_id, date=date).first()
 
     if existing:
         existing.calories = totals.calories or 0
@@ -71,7 +67,7 @@ def update_daily_summary(db: Session, user_id: int, date):
             calories=totals.calories or 0,
             protein=totals.protein or 0,
             carbs=totals.carbs or 0,
-            fat=totals.fat or 0
+            fat=totals.fat or 0,
         )
         db.add(summary)
 

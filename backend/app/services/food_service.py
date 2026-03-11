@@ -1,6 +1,10 @@
 import json
 from app.core.redis_client import redis_client
-from app.repositories.food_repository import search_foods, search_foods_trigram, autocomplete_foods
+from app.repositories.food_repository import (
+    search_foods,
+    search_foods_trigram,
+    autocomplete_foods,
+)
 
 CACHE_TTL = 1800
 
@@ -24,7 +28,7 @@ def search_food(db, query: str):
             "calories": r.calories,
             "protein": r.protein,
             "carbs": r.carbs,
-            "fat": r.fat
+            "fat": r.fat,
         }
         for r in results
     ]
@@ -32,6 +36,7 @@ def search_food(db, query: str):
     redis_client.setex(cache_key, CACHE_TTL, json.dumps(foods))
 
     return foods
+
 
 def autocomplete_food(db, query: str):
     cache_key = f"food_autocomplete:{query}"

@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, Float, ForeignKey
 from app.core.database import Base
 
+
 class MealItem(Base):
     __tablename__ = "meal_items"
 

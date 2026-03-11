@@ -1,5 +1,4 @@
 import sys
-import os
 
 # This allows the script to find your app modules
 sys.path.append("/app")
@@ -11,12 +10,8 @@ from app.core.database import SessionLocal
 FOOD_FILE = "usda/FoodData_Central_sr_legacy_food_csv_2018-04/food.csv"
 NUTRIENT_FILE = "usda/FoodData_Central_sr_legacy_food_csv_2018-04/food_nutrient.csv"
 
-TARGET_NUTRIENTS = {
-    1008: "calories",
-    1003: "protein",
-    1005: "carbs",
-    1004: "fat"
-}
+TARGET_NUTRIENTS = {1008: "calories", 1003: "protein", 1005: "carbs", 1004: "fat"}
+
 
 def main():
     print("Loading CSV files...")
@@ -27,9 +22,7 @@ def main():
     nutrients = nutrients[nutrients["nutrient_id"].isin(TARGET_NUTRIENTS.keys())]
 
     nutrients = nutrients.pivot_table(
-        index="fdc_id",
-        columns="nutrient_id",
-        values="amount"
+        index="fdc_id", columns="nutrient_id", values="amount"
     ).reset_index()
 
     nutrients = nutrients.rename(columns=TARGET_NUTRIENTS)
@@ -49,7 +42,7 @@ def main():
             calories=row["calories"],
             protein=row["protein"],
             carbs=row["carbs"],
-            fat=row["fat"]
+            fat=row["fat"],
         )
         for _, row in merged.iterrows()
     ]
@@ -59,6 +52,7 @@ def main():
     db.close()
 
     print("Done!")
+
 
 if __name__ == "__main__":
     main()

@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class FoodResponse(BaseModel):
     id: int
     name: str

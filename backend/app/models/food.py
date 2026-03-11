@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, Float
 from sqlalchemy.dialects.postgresql import TSVECTOR
 from app.core.database import Base
 
+
 class Food(Base):
     __tablename__ = "foods"
 
