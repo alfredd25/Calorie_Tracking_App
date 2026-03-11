@@ -1,17 +1,23 @@
+# Python
 __pycache__/
-*.py[cod]
-*$py.class
-
+*.pyc
+*.pyo
+.venv/
 venv/
-env/
-.env/
-.env
-.venv
 
-db.sqlite3
-*.log
-
-.vscode/
-.idea/
-
+# USDA data (too large for git)
 usda/
+
+# Environment
+.env
+*.env
+
+# Coverage
+.coverage
+htmlcov/
+
+# Pytest cache
+.pytest_cache/
+
+# Docker volumes
+postgres_data/
