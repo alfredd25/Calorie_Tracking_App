@@ -28,7 +28,7 @@ def search_foods_trigram(db: Session, query: str):
 
 def autocomplete_foods(db: Session, query: str):
     sql = text("""
-        SELECT id, name
+        SELECT id, name, calories, protein, carbs, fat
         FROM foods
         WHERE name ILIKE :query
         ORDER BY name
@@ -40,5 +40,4 @@ def autocomplete_foods(db: Session, query: str):
 
 def get_food_by_id(db: Session, food_id: int):
     from app.models.food import Food
-
     return db.query(Food).filter(Food.id == food_id).first()

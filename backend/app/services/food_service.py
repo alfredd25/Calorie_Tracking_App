@@ -35,18 +35,24 @@ def search_food(db, query: str):
 
     redis_client.setex(cache_key, CACHE_TTL, json.dumps(foods))
 
-    return foods
-
-
 def autocomplete_food(db, query: str):
-    cache_key = f"food_autocomplete:{query}"
+    cache_key = f"food_autocomplete_v2:{query}"
 
     cached = redis_client.get(cache_key)
     if cached:
         return json.loads(cached)
 
     rows = autocomplete_foods(db, query)
-    results = [{"id": r.id, "name": r.name} for r in rows]
+    results = [
+        {
+            "id": r.id, 
+            "name": r.name,
+            "calories": r.calories,
+            "protein": r.protein,
+            "carbs": r.carbs,
+            "fat": r.fat
+        } for r in rows
+    ]
 
     redis_client.setex(cache_key, CACHE_TTL, json.dumps(results))
 

@@ -3,6 +3,12 @@ from app.core.database import SessionLocal
 from app.repositories.meal_repository import update_daily_summary
 from app.core.redis_client import redis_client
 
+import app.models.user
+import app.models.food
+import app.models.meal
+import app.models.meal_item
+import app.models.daily_summary
+
 
 @celery_app.task
 def recalculate_daily_summary(user_id: int, date: str):
