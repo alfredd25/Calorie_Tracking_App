@@ -8,10 +8,12 @@ export interface Food {
 }
 
 export interface MealSummary {
-  total_calories: number;
-  total_protein: number;
-  total_carbs: number;
-  total_fat: number;
+  user_id: number;
+  date: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
 }
 
 export interface Meal {
