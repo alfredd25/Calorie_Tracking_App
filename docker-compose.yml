@@ -1,9 +1,9 @@
-version: '3.8'
-
 services:
 
   api:
-    build: .
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: calorie_api
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     volumes:
@@ -34,7 +34,9 @@ services:
       - "6379:6379"
 
   celery_worker:
-    build: .
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     command: celery -A app.core.celery_worker.celery_app worker --loglevel=info
     volumes:
       - ./backend:/app
@@ -43,3 +45,15 @@ services:
       - postgres
     env_file:
       - .env
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: calorie_frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    depends_on:
+      - api
