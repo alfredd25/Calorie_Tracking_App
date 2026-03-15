@@ -18,7 +18,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     working_dir: /app
-    command: pytest tests/ -v --cov=app --cov-report=term-missing
+    command: python -m pytest /app/tests/ -v --cov=app --cov-report=term-missing
     volumes:
       - ./backend:/app
       - ./usda:/app/usda
