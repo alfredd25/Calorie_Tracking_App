@@ -12,29 +12,35 @@ interface MealCardProps {
 }
 
 export function MealCard({ food, onAdd, onRemove }: MealCardProps) {
-  const [quantity, setQuantity] = useState(1);
+  const [grams, setGrams] = useState(100);
+
+  // USDA macros are per 100g so we scale by grams/100
+  const scale = grams / 100;
 
   return (
     <div className="flex items-center justify-between p-3 border border-slate-200 rounded-md bg-white">
       <div className="flex-1">
         <p className="font-medium text-sm">{food.name}</p>
         <p className="text-xs text-slate-400">
-          {(food.calories * quantity).toFixed(0)} cal | 
-          P: {(food.protein * quantity).toFixed(1)}g | 
-          C: {(food.carbs * quantity).toFixed(1)}g | 
-          F: {(food.fat * quantity).toFixed(1)}g
+          {(food.calories * scale).toFixed(0)} cal |
+          P: {(food.protein * scale).toFixed(1)}g |
+          C: {(food.carbs * scale).toFixed(1)}g |
+          F: {(food.fat * scale).toFixed(1)}g
         </p>
       </div>
       <div className="flex items-center gap-2 ml-4">
-        <Input
-          type="number"
-          min={0.5}
-          step={0.5}
-          value={quantity}
-          onChange={(e) => setQuantity(parseFloat(e.target.value))}
-          className="w-16 text-center"
-        />
-        <Button size="sm" onClick={() => onAdd(food, quantity)}>
+        <div className="flex items-center gap-1">
+          <Input
+            type="number"
+            min={1}
+            step={10}
+            value={grams}
+            onChange={(e) => setGrams(parseFloat(e.target.value))}
+            className="w-20 text-center"
+          />
+          <span className="text-xs text-slate-400">g</span>
+        </div>
+        <Button size="sm" onClick={() => onAdd(food, grams / 100)}>
           Add
         </Button>
         <Button size="sm" variant="outline" onClick={() => onRemove(food)}>
