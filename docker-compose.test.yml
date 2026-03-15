@@ -14,7 +14,9 @@ services:
       - "6380:6379"
 
   api_test:
-    build: .
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     command: pytest tests/ -v --cov=app --cov-report=term-missing
     volumes:
       - ./backend:/app
