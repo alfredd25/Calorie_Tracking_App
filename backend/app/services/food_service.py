@@ -34,6 +34,7 @@ def search_food(db, query: str):
     ]
 
     redis_client.setex(cache_key, CACHE_TTL, json.dumps(foods))
+    return foods
 
 def autocomplete_food(db, query: str):
     cache_key = f"food_autocomplete_v2:{query}"
