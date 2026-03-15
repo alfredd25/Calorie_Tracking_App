@@ -5,7 +5,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: calorie_api
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
     volumes:
       - ./backend:/app
       - ./usda:/app/usda
@@ -57,3 +57,14 @@ services:
       - NEXT_PUBLIC_API_URL=http://localhost:8000
     depends_on:
       - api
+  
+  nginx:
+    image: nginx:alpine
+    container_name: calorie_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - api
+      - frontend
