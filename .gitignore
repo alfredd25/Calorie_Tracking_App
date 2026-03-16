@@ -21,3 +21,5 @@ htmlcov/
 
 # Docker volumes
 postgres_data/
+
+calorie-tracker-key.pem
