@@ -1,4 +1,4 @@
-# 🍏 NutriTrack: Full-stack Calorie Tracker App
+# NutriTrack: Full-stack Calorie Tracker Application
 
 Welcome to **NutriTrack**, a feature-rich, full-stack Calorie Tracker application designed to help users accurately log their daily food intake, monitor nutrient consumption, and visualize their health progression. 
 
@@ -6,32 +6,32 @@ The project is built with a highly decoupled architecture, leveraging a modern R
 
 ---
 
-## ✨ Features Breakdown
+## Features Breakdown
 
-### 1. 🔐 Robust Authentication & Security
+### 1. Robust Authentication & Security
 - **Secured User Accounts:** Secure registration and login flows using JWT (JSON Web Tokens). Passwords are cryptographically hashed using `bcrypt` preventing unauthorized access.
 - **API Rate Limiting:** Built-in `slowapi` integration protects backend endpoints from DDoS, excessive spam, and brute-force attacks by limiting request rates per IP.
 
-### 2. 🍔 Comprehensive Food Tracking & Database
+### 2. Comprehensive Food Tracking & Database
 - **Advanced Food Search:** Users can search for detailed dietary information leveraging a robust PostgreSQL implementation—capable of full-text searching against external and internal datasets (such as the USDA database imports).
 - **Logging Meals:** Users can log individual food items to specific meal categories (e.g., Breakfast, Lunch, Dinner). The app automatically calculates aggregated macronutrients and total calories.
 - **Dynamic Meal Management:** Full CRUD capability. Add, edit, or delete logged foods flexibly through the custom *MealSection* UI. 
 
-### 3. 📊 Interactive Dashboard & Analytics
+### 3. Interactive Dashboard & Analytics
 - **Visualized Progression:** Utilizing `recharts`, the dashboard presents a `WeeklyChart` outlining calorie consumption over the week.
 - **Goal Rings & Streaks:** Engaging UI/UX using animated elements (like `AnimatedRing`) to showcase daily goals versus consumed calories. 
 - **Daily Summaries:** The backend automatically tracks daily metric aggregations and user progress streaks, persisting them reliably in the database.
 
-### 4. ⚡ Asynchronous Background Tasks
+### 4. Asynchronous Background Tasks
 - **Celery & Redis:** Heavy computational tasks (like massive data imports, daily summary generation, or background cron-jobs) are offloaded to **Celery Workers** backed by **Redis** as a message broker. This ensures the main FastAPI application remains lightning-fast and responsive at all times.
 
-### 5. 📈 Enterprise-grade Monitoring & Observability
+### 5. Enterprise-grade Monitoring & Observability
 - **Prometheus Metrics:** The FastAPI backend natively exposes HTTP metrics via `prometheus-fastapi-instrumentator`.
 - **Grafana Dashboards:** Beautiful, real-time visual dashboards track API performance, load times, server strain, and application metrics to facilitate proactive optimization.
 
 ---
 
-## 🛠 Technology Stack
+## Technology Stack
 
 This project utilizes a cutting-edge, modern tech stack combining type-safety, robust performance, and scalability.
 
@@ -69,7 +69,7 @@ To ensure maximum portability and scalability, there are **no local installation
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```
 Calorie_Tracker/
@@ -110,7 +110,7 @@ Calorie_Tracker/
 
 ---
 
-## 🚀 CI / CD Pipeline Flow
+## CI/CD Pipeline Flow
 
 The deployment of this application is fully automated to streamline development using the included `Jenkinsfile`:
 
@@ -122,6 +122,6 @@ The deployment of this application is fully automated to streamline development 
 
 ---
 
-## 📝 Conclusion
+## Conclusion
 
 This project successfully bridges cutting-edge modern frontend aesthetics with a robust, production-ready, asynchronous Python backend. Features like Redis caching, background task queuing with Celery, and comprehensive monitoring with Prometheus and Grafana validate that this application is not merely a prototype, but a fully scalable engineering achievement deployed seamlessly to the AWS Cloud.
