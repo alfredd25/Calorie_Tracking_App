@@ -24,3 +24,5 @@ email-validator>=2.0.0
 
 black>=24.0.0
 ruff>=0.3.0
+
+prometheus-fastapi-instrumentator>=6.0.0
