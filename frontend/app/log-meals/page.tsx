@@ -37,17 +37,17 @@ export default function LogMealsPage() {
   }, []);
 
   const getLoggedFoodsForType = (type: string): LoggedFood[] => {
-    const meal = foods.find((m: any) => m.meal_type === type);
+    const meal = foods.find((m: any) => m.meal_type === type.toLowerCase());
     if (!meal || !meal.items) return [];
     return meal.items.map((item: any) => ({
       id: item.id,
       food_id: item.food_id,
       name: item.food?.name || "Unknown Food",
-      grams: item.grams,
-      calories: item.calculated_calories,
-      protein: item.calculated_protein,
-      carbs: item.calculated_carbs,
-      fat: item.calculated_fat,
+      grams: item.quantity,
+      calories: item.calories,
+      protein: item.protein,
+      carbs: item.carbs,
+      fat: item.fat,
     }));
   };
 

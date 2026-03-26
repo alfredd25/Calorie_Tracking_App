@@ -1,4 +1,4 @@
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, ConfigDict, field_validator
 from datetime import date
 from enum import Enum
 
@@ -27,3 +27,29 @@ class AddFoodRequest(BaseModel):
         if v <= 0:
             raise ValueError("quantity must be greater than 0")
         return v
+
+
+class FoodBrief(BaseModel):
+    id: int
+    name: str
+    model_config = ConfigDict(from_attributes=True)
+
+
+class MealItemResponse(BaseModel):
+    id: int
+    food_id: int
+    food: FoodBrief | None = None
+    quantity: float
+    calories: float
+    protein: float
+    carbs: float
+    fat: float
+    model_config = ConfigDict(from_attributes=True)
+
+
+class MealListResponse(BaseModel):
+    id: int
+    meal_type: str
+    items: list[MealItemResponse] = []
+    model_config = ConfigDict(from_attributes=True)
+

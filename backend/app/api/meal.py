@@ -10,6 +10,7 @@ from app.repositories.meal_repository import remove_meal_item, get_weekly_summar
 from app.auth.jwt_handler import get_current_user
 from pydantic import BaseModel, field_validator
 from app.models.meal import Meal
+from app.schemas.meal import MealListResponse
 
 router = APIRouter()
 
@@ -94,14 +95,14 @@ def day_summary(
     return summary
 
 
-@router.get("/meals/list")
+@router.get("/meals/list", response_model=list[MealListResponse])
 def list_meals(
     date: date,
     db: Session = Depends(get_db),
     current_user: int = Depends(get_current_user),
 ):
     meals = db.query(Meal).filter_by(user_id=current_user, date=date).all()
-    return meals
+    return [MealListResponse.model_validate(m) for m in meals]
 
 
 @router.delete("/meals/remove-food/{meal_item_id}")
