@@ -3,7 +3,12 @@ from app.core.database import Base, DATABASE_URL
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from alembic import context
-
+from app.models.user import User
+from app.models.weight_log import WeightLog
+from app.models.meal import Meal
+from app.models.meal_item import MealItem
+from app.models.food import Food
+from app.models.daily_summary import DailySummary
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config

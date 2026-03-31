@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { MealSection, LoggedFood } from "@/components/MealSection";
+import { WeightLoggingWidget } from "@/components/WeightLoggingWidget";
 
 export default function LogMealsPage() {
   const [foods, setFoods] = useState<any[]>([]);
@@ -10,7 +11,7 @@ export default function LogMealsPage() {
   const fetchMeals = async () => {
     try {
       const token = localStorage.getItem("token");
-      const today = new Date().toISOString().split("T")[0];
+      const today = new Date().toLocaleDateString('en-CA');
 
       const res = await fetch(`http://localhost/api/meals/list?date=${today}`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -59,6 +60,8 @@ export default function LogMealsPage() {
         <h1 className="text-3xl font-bold tracking-tight text-slate-900 mb-2">Log Meals</h1>
         <p className="text-slate-500 font-medium">Add your foods for today</p>
       </div>
+      
+      <WeightLoggingWidget />
 
       <div className="space-y-4">
         {mealTypes.map(type => (

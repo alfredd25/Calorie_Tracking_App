@@ -3,14 +3,21 @@ import React, { useState, useEffect } from "react";
 import { AnimatedRing } from "@/components/AnimatedRing";
 import { WeeklyChart } from "@/components/WeeklyChart";
 import { Flame } from "lucide-react";
+import { DashboardWeightCard } from "@/components/DashboardWeightCard";
 
 export default function DashboardPage() {
   const [summary, setSummary] = useState({ calories: 0, protein: 0, carbs: 0, fat: 0 });
   const [weeklyData, setWeeklyData] = useState([]);
   const [streak, setStreak] = useState(0);
   const [todayStr, setTodayStr] = useState("");
+  const [profile, setProfile] = useState<any>(null);
 
-  const goals = { calories: 2000, protein: 150, carbs: 200, fat: 65 };
+  const goals = { 
+    calories: profile?.daily_calorie_target || 2000, 
+    protein: profile?.target_protein || 150, 
+    carbs: profile?.target_carbs || 200, 
+    fat: profile?.target_fat || 65 
+  };
 
   useEffect(() => {
     setTodayStr(new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }));
@@ -20,9 +27,12 @@ export default function DashboardPage() {
   const fetchDashboardData = async () => {
     try {
       const token = localStorage.getItem("token");
-      const today = new Date().toISOString().split("T")[0];
+      const today = new Date().toLocaleDateString('en-CA');
 
       const headers = { Authorization: `Bearer ${token}` };
+
+      const profileRes = await fetch(`http://localhost/api/users/me`, { headers });
+      if (profileRes.ok) setProfile(await profileRes.json());
 
       const sumRes = await fetch(`http://localhost/api/meals/day-summary?date=${today}`, { headers });
       if (sumRes.ok) setSummary(await sumRes.json());
@@ -53,36 +63,42 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex flex-col items-center">
-        <h3 className="text-lg font-bold text-slate-800 mb-6 w-full text-left">Daily Goals</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 w-full justify-items-center">
-          <AnimatedRing 
-            progress={Math.round(summary.calories)} 
-            goal={goals.calories} 
-            label="Calories" 
-            colorClass="stroke-green-500" 
-          />
-          <AnimatedRing 
-            progress={Math.round(summary.protein)} 
-            goal={goals.protein} 
-            label="Protein" 
-            colorClass="stroke-blue-500" 
-            size={100} strokeWidth={8} 
-          />
-          <AnimatedRing 
-            progress={Math.round(summary.carbs)} 
-            goal={goals.carbs} 
-            label="Carbs" 
-            colorClass="stroke-yellow-500" 
-            size={100} strokeWidth={8} 
-          />
-          <AnimatedRing 
-            progress={Math.round(summary.fat)} 
-            goal={goals.fat} 
-            label="Fat" 
-            colorClass="stroke-purple-500" 
-            size={100} strokeWidth={8} 
-          />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex flex-col items-center">
+          <h3 className="text-lg font-bold text-slate-800 mb-6 w-full text-left">Daily Goals</h3>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 w-full justify-items-center">
+            <AnimatedRing 
+              progress={Math.round(summary.calories)} 
+              goal={Math.round(goals.calories)} 
+              label="Calories" 
+              colorClass="stroke-green-500" 
+            />
+            <AnimatedRing 
+              progress={Math.round(summary.protein)} 
+              goal={Math.round(goals.protein)} 
+              label="Protein" 
+              colorClass="stroke-blue-500" 
+              size={100} strokeWidth={8} 
+            />
+            <AnimatedRing 
+              progress={Math.round(summary.carbs)} 
+              goal={Math.round(goals.carbs)} 
+              label="Carbs" 
+              colorClass="stroke-yellow-500" 
+              size={100} strokeWidth={8} 
+            />
+            <AnimatedRing 
+              progress={Math.round(summary.fat)} 
+              goal={Math.round(goals.fat)} 
+              label="Fat" 
+              colorClass="stroke-purple-500" 
+              size={100} strokeWidth={8} 
+            />
+          </div>
+        </div>
+        
+        <div className="lg:col-span-1">
+          <DashboardWeightCard targetWeight={profile?.target_weight_kg} />
         </div>
       </div>
 

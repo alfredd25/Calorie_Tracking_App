@@ -17,13 +17,31 @@ export default function WelcomePage() {
     else if (hour < 18) setGreeting("Good afternoon");
     else setGreeting("Good evening");
     
+    fetchProfile();
     fetchSummary();
   }, []);
+
+  const fetchProfile = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch("http://localhost/api/users/me", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (!data.onboarding_complete) {
+          window.location.href = "/onboarding";
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const fetchSummary = async () => {
     try {
       const token = localStorage.getItem("token");
-      const today = new Date().toISOString().split("T")[0];
+      const today = new Date().toLocaleDateString('en-CA');
       
       const res = await fetch(`http://localhost/api/meals/day-summary?date=${today}`, {
         headers: { Authorization: `Bearer ${token}` }
