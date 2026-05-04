@@ -5,13 +5,9 @@ services:
       POSTGRES_DB: test_db
       POSTGRES_USER: test_user
       POSTGRES_PASSWORD: test_pass
-    ports:
-      - "5433:5432"
 
   redis_test:
     image: redis:7-alpine
-    ports:
-      - "6380:6379"
 
   api_test:
     build:
