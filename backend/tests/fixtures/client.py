@@ -20,10 +20,15 @@ def client(db):
     app.dependency_overrides[meal_get_db] = override_get_db
     app.dependency_overrides[auth_get_db] = override_get_db
 
-    with TestClient(app) as c:
-        yield c
-
-    app.dependency_overrides.clear()
+    # Disable SlowAPI rate limiting for the test session so the suite
+    # can make as many requests as needed without hitting 429 errors.
+    app.state.limiter.enabled = False
+    try:
+        with TestClient(app) as c:
+            yield c
+    finally:
+        app.state.limiter.enabled = True
+        app.dependency_overrides.clear()
 
 
 @pytest.fixture
