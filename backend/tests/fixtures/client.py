@@ -12,22 +12,26 @@ def client(db):
         finally:
             pass
 
-    from app.api.food import get_db
+    from app.api.food import get_db, limiter as food_limiter
     from app.api.meal import get_db as meal_get_db
-    from app.api.auth import get_db as auth_get_db
+    from app.api.auth import get_db as auth_get_db, limiter as auth_limiter
 
     app.dependency_overrides[get_db] = override_get_db
     app.dependency_overrides[meal_get_db] = override_get_db
     app.dependency_overrides[auth_get_db] = override_get_db
 
-    # Disable SlowAPI rate limiting for the test session so the suite
-    # can make as many requests as needed without hitting 429 errors.
-    app.state.limiter.enabled = False
+    # Each route module (auth.py, food.py) creates its OWN Limiter instance
+    # that is completely independent of app.state.limiter. We must disable ALL
+    # of them; otherwise the per-module @limiter.limit() decorators still fire.
+    all_limiters = [app.state.limiter, auth_limiter, food_limiter]
+    for lim in all_limiters:
+        lim.enabled = False
     try:
         with TestClient(app) as c:
             yield c
     finally:
-        app.state.limiter.enabled = True
+        for lim in all_limiters:
+            lim.enabled = True
         app.dependency_overrides.clear()
 
 
