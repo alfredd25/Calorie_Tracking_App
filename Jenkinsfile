@@ -2,12 +2,13 @@ pipeline {
     agent any
 
     environment {
+        EC2_HOST = '3.26.147.100'
+        EC2_USER = 'ubuntu'
+        NEXT_PUBLIC_API_URL = 'https://nutritracks.tech/api'
         DOCKER_HUB_CREDENTIALS = credentials('dockerhub-credentials')
         DOCKER_HUB_USERNAME = 'alfredd25'
         BACKEND_IMAGE = "${DOCKER_HUB_USERNAME}/calorie-tracker-backend"
         FRONTEND_IMAGE = "${DOCKER_HUB_USERNAME}/calorie-tracker-frontend"
-        EC2_HOST = '13.236.134.144'
-        EC2_USER = 'ubuntu'
     }
 
     stages {
@@ -26,16 +27,16 @@ pipeline {
             }
         }
 
-        stage('Build Images') {
+        stage('Build & Tag Images') {
             steps {
-                sh '''
-                    docker compose build api
+                sh """
+                    docker build -t ${BACKEND_IMAGE}:latest ./backend
                     docker build \
                         --no-cache \
-                        --build-arg NEXT_PUBLIC_API_URL=http://13.236.134.144/api \
-                        -t calorie-tracker-frontend \
+                        --build-arg NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL} \
+                        -t ${FRONTEND_IMAGE}:latest \
                         ./frontend
-                '''
+                """
             }
         }
 
@@ -43,8 +44,6 @@ pipeline {
             steps {
                 sh '''
                     echo $DOCKER_HUB_CREDENTIALS_PSW | docker login -u $DOCKER_HUB_CREDENTIALS_USR --password-stdin
-                    docker tag calorie-tracker-api ${BACKEND_IMAGE}:latest
-                    docker tag calorie-tracker-frontend ${FRONTEND_IMAGE}:latest
                     docker push ${BACKEND_IMAGE}:latest
                     docker push ${FRONTEND_IMAGE}:latest
                 '''
@@ -56,7 +55,7 @@ pipeline {
                 sshagent(['ec2-ssh-key']) {
                     sh '''
                         ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} "
-                            cd ~/calorie-tracker &&
+                            cd ~/NutriTrack &&
                             docker compose pull &&
                             docker compose up -d --force-recreate &&
                             docker exec calorie_api alembic upgrade head
@@ -69,12 +68,12 @@ pipeline {
 
     post {
         success {
-            echo 'Pipeline succeeded! App deployed to EC2.'
+            echo 'Pipeline succeeded! NutriTrack is updated at https://nutritracks.tech'
         }
         failure {
-            echo 'Pipeline failed!'
+            echo 'Pipeline failed! Check the console output above.'
         }
-        always {
+        cleanup {
             sh 'docker compose -f docker-compose.test.yml down || true'
         }
     }
