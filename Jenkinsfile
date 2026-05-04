@@ -21,7 +21,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 sh '''
-                    docker compose -f docker-compose.test.yml up --abort-on-container-exit api_test
+                    docker compose -f docker-compose.test.yml up --build --abort-on-container-exit api_test
                     docker compose -f docker-compose.test.yml down
                 '''
             }
