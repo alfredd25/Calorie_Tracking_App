@@ -37,8 +37,9 @@ class FoodBrief(BaseModel):
 
 class MealItemResponse(BaseModel):
     id: int
-    food_id: int
+    food_id: int | None = None
     food: FoodBrief | None = None
+    name: str | None = None
     quantity: float
     calories: float
     protein: float

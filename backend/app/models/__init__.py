@@ -4,3 +4,5 @@ from .food import Food
 from .meal_item import MealItem
 from .meal import Meal
 from .weight_log import WeightLog
+from .custom_food import CustomFood
+from .custom_meal import CustomMeal, CustomMealItem

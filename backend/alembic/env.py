@@ -9,6 +9,8 @@ from app.models.meal import Meal
 from app.models.meal_item import MealItem
 from app.models.food import Food
 from app.models.daily_summary import DailySummary
+from app.models.custom_food import CustomFood
+from app.models.custom_meal import CustomMeal, CustomMealItem
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
