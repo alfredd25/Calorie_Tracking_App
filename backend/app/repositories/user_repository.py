@@ -18,3 +18,7 @@ def create_user(db: Session, email: str, password: str):
 
 def get_user_by_email(db: Session, email: str):
     return db.query(User).filter(User.email == email).first()
+
+
+def get_user_by_reset_token(db: Session, reset_token: str):
+    return db.query(User).filter(User.reset_token == reset_token).first()

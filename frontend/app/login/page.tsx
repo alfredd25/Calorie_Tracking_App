@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { loginUser } from "@/services/api";
 import { saveToken, saveUserId } from "@/services/auth";
@@ -8,6 +9,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+function getErrorMessage(err: unknown, fallback: string) {
+  if (typeof err === "object" && err !== null && "detail" in err) {
+    const detail = (err as { detail?: unknown }).detail;
+    if (typeof detail === "string") return detail;
+  }
+  return fallback;
+}
 
 export default function LoginPage() {
   const router = useRouter();
@@ -24,8 +33,8 @@ export default function LoginPage() {
       saveToken(data.access_token);
       saveUserId(data.user_id);
       router.push("/dashboard");
-    } catch (err: any) {
-      setError(err.detail || "Login failed");
+    } catch (err: unknown) {
+      setError(getErrorMessage(err, "Login failed"));
     } finally {
       setLoading(false);
     }
@@ -49,7 +58,15 @@ export default function LoginPage() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <div className="flex items-center justify-between gap-3">
+              <Label htmlFor="password">Password</Label>
+              <Link
+                href="/forgot-password"
+                className="text-sm text-primary hover:opacity-80 transition-opacity"
+              >
+                Forgot Password?
+              </Link>
+            </div>
             <Input
               id="password"
               type="password"

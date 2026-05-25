@@ -102,6 +102,14 @@ export default function AuthPage() {
                 className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm font-medium"
                 placeholder="••••••••"
               />
+              {isLogin && (
+                <a
+                  href="/forgot-password"
+                  className="block text-sm font-medium text-primary hover:text-green-600 transition-colors ml-1"
+                >
+                  Forgot password?
+                </a>
+              )}
             </div>
 
             <button

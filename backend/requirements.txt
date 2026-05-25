@@ -12,7 +12,8 @@ passlib[bcrypt]
 python-jose
 python-multipart
 pandas
-celery 
+celery
+resend
 
 pytest
 pytest-asyncio

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, Boolean
+from sqlalchemy import Boolean, Column, DateTime, Float, Integer, String
 from app.core.database import Base
 
 
@@ -8,6 +8,8 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     email = Column(String, unique=True, index=True)
     password = Column(String)
+    reset_token = Column(String, unique=True, index=True, nullable=True)
+    reset_token_expiry = Column(DateTime(timezone=True), nullable=True)
 
     # Onboarding / Profile Fields
     full_name = Column(String, nullable=True)
@@ -18,12 +20,12 @@ class User(Base):
     goal = Column(String, nullable=True)
     target_weight_kg = Column(Float, nullable=True)
     activity_level = Column(String, nullable=True)
-    
+
     # Nutritional Targets
     tdee = Column(Float, nullable=True)
     daily_calorie_target = Column(Float, nullable=True)
     target_protein = Column(Float, nullable=True)
     target_carbs = Column(Float, nullable=True)
     target_fat = Column(Float, nullable=True)
-    
+
     onboarding_complete = Column(Boolean, default=False)
