@@ -8,6 +8,7 @@ export function Navigation() {
   const router = useRouter();
 
   if (pathname === "/") return null;
+  if (pathname?.startsWith("/log-meal/")) return null;
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -38,6 +39,12 @@ export function Navigation() {
           className={`text-sm font-medium transition-colors hover:text-primary ${pathname === '/log-meals' ? 'text-primary' : 'text-slate-500'}`}
         >
           Log Meals
+        </Link>
+        <Link
+          href="/create-meal"
+          className={`text-sm font-medium transition-colors hover:text-primary ${pathname?.startsWith('/create-meal') ? 'text-primary' : 'text-slate-500'}`}
+        >
+          Create Meal
         </Link>
         <Link 
           href="/dashboard" 
