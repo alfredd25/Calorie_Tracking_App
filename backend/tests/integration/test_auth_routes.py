@@ -112,17 +112,18 @@ def test_reset_password_uses_single_use_token(client, db, monkeypatch):
     assert db_user.reset_token == _hash_reset_token(token)
     assert db_user.reset_token != token
 
+    new_password = "NewPassw0rd!"
     reset_response = client.post(
-        f"/auth/reset-password/{token}", json={"password": "newpassword"}
+        f"/auth/reset-password/{token}", json={"password": new_password}
     )
     assert reset_response.status_code == 200
 
     db.refresh(db_user)
-    assert verify_password("newpassword", db_user.password)
+    assert verify_password(new_password, db_user.password)
     assert db_user.reset_token is None
     assert db_user.reset_token_expiry is None
 
     reuse_response = client.post(
-        f"/auth/reset-password/{token}", json={"password": "anotherpassword"}
+        f"/auth/reset-password/{token}", json={"password": "AnotherPassw0rd!"}
     )
     assert reuse_response.status_code == 400
