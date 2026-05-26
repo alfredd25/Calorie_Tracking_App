@@ -20,7 +20,7 @@ export default function AuthPage() {
     try {
       const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
 
-      const res = await fetch(`http://localhost${endpoint}`, {
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -39,7 +39,7 @@ export default function AuthPage() {
         localStorage.setItem("user_name", email.split("@")[0]);
         router.push("/welcome");
       } else {
-        const loginRes = await fetch("http://localhost/api/auth/login", {
+        const loginRes = await fetch("/api/auth/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password }),

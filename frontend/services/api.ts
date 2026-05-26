@@ -1,4 +1,8 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost/api";
+// Relative-path strategy: the browser resolves "/api/..." against whatever
+// origin it's currently loaded from (localhost in dev, nutritracks.tech in
+// prod). Nginx terminates TLS and proxies "/api/" to the backend container,
+// so no NEXT_PUBLIC_API_URL needs to be baked into the build.
+const API_BASE = "/api";
 
 function getToken(): string | null {
   return localStorage.getItem("token");

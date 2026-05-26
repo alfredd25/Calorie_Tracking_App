@@ -13,7 +13,7 @@ export default function LogMealsPage() {
       const token = localStorage.getItem("token");
       const today = new Date().toLocaleDateString('en-CA');
 
-      const res = await fetch(`http://localhost/api/meals/list?date=${today}`, {
+      const res = await fetch(`/api/meals/list?date=${today}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -21,7 +21,7 @@ export default function LogMealsPage() {
         setFoods(data);
       }
 
-      const summaryRes = await fetch(`http://localhost/api/meals/day-summary?date=${today}`, {
+      const summaryRes = await fetch(`/api/meals/day-summary?date=${today}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (summaryRes.ok) {

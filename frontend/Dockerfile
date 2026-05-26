@@ -13,9 +13,9 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# ← ADD THESE TWO LINES
-ARG NEXT_PUBLIC_API_URL
-ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+# No NEXT_PUBLIC_API_URL is baked into the build. The frontend uses a
+# relative "/api" base, and Nginx routes "/api/*" to the backend. This
+# keeps a single image safe to promote across staging and production.
 
 RUN npm run build
 

@@ -31,16 +31,16 @@ export default function DashboardPage() {
 
       const headers = { Authorization: `Bearer ${token}` };
 
-      const profileRes = await fetch(`http://localhost/api/users/me`, { headers });
+      const profileRes = await fetch(`/api/users/me`, { headers });
       if (profileRes.ok) setProfile(await profileRes.json());
 
-      const sumRes = await fetch(`http://localhost/api/meals/day-summary?date=${today}`, { headers });
+      const sumRes = await fetch(`/api/meals/day-summary?date=${today}`, { headers });
       if (sumRes.ok) setSummary(await sumRes.json());
 
-      const weekRes = await fetch(`http://localhost/api/meals/weekly-summary`, { headers });
+      const weekRes = await fetch(`/api/meals/weekly-summary`, { headers });
       if (weekRes.ok) setWeeklyData(await weekRes.json());
 
-      const streakRes = await fetch(`http://localhost/api/meals/streak`, { headers });
+      const streakRes = await fetch(`/api/meals/streak`, { headers });
       if (streakRes.ok) {
         const streakData = await streakRes.json();
         setStreak(streakData.streak);

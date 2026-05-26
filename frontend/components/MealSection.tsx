@@ -43,7 +43,7 @@ export function MealSection({ mealType, loggedFoods, onMealUpdated }: MealSectio
   const searchFoods = async (q: string) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost/api/foods/autocomplete?q=${q}`, {
+      const res = await fetch(`/api/foods/autocomplete?q=${q}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -69,7 +69,7 @@ export function MealSection({ mealType, loggedFoods, onMealUpdated }: MealSectio
         Authorization: `Bearer ${token}`
       };
 
-      const createRes = await fetch("http://localhost/api/meals/create", {
+      const createRes = await fetch("/api/meals/create", {
         method: "POST",
         headers,
         body: JSON.stringify({
@@ -82,7 +82,7 @@ export function MealSection({ mealType, loggedFoods, onMealUpdated }: MealSectio
       const mealData = await createRes.json();
       const meal_id = mealData.id || mealData.meal_id;
 
-      const addRes = await fetch("http://localhost/api/meals/add-food", {
+      const addRes = await fetch("/api/meals/add-food", {
         method: "POST",
         headers,
         body: JSON.stringify({
@@ -113,7 +113,7 @@ export function MealSection({ mealType, loggedFoods, onMealUpdated }: MealSectio
   const handleRemoveFood = async (mealItemId: number) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost/api/meals/remove-food/${mealItemId}`, {
+      const res = await fetch(`/api/meals/remove-food/${mealItemId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }
       });

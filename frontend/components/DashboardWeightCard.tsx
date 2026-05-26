@@ -13,7 +13,7 @@ export function DashboardWeightCard({ targetWeight }: { targetWeight?: number | 
   const fetchHistory = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost/api/weight/history", {
+      const res = await fetch("/api/weight/history", {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {

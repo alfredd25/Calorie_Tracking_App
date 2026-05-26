@@ -15,7 +15,7 @@ export function WeightLoggingWidget({ onLog }: { onLog?: () => void }) {
   const fetchHistory = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost/api/weight/history", {
+      const res = await fetch("/api/weight/history", {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -37,7 +37,7 @@ export function WeightLoggingWidget({ onLog }: { onLog?: () => void }) {
       
       const finalWeightKg = weightMode === "kg" ? Number(weightInput) : Number(weightInput) * 0.453592;
 
-      const res = await fetch("http://localhost/api/weight/log", {
+      const res = await fetch("/api/weight/log", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ date: today, weight_kg: finalWeightKg })

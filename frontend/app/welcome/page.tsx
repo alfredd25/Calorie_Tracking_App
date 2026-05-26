@@ -24,7 +24,7 @@ export default function WelcomePage() {
   const fetchProfile = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost/api/users/me", {
+      const res = await fetch("/api/users/me", {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -43,7 +43,7 @@ export default function WelcomePage() {
       const token = localStorage.getItem("token");
       const today = new Date().toLocaleDateString('en-CA');
       
-      const res = await fetch(`http://localhost/api/meals/day-summary?date=${today}`, {
+      const res = await fetch(`/api/meals/day-summary?date=${today}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
