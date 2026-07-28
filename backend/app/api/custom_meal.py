@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.auth.jwt_handler import get_current_user
-from app.core.database import SessionLocal
+from app.core.database import get_db
 from app.repositories import custom_meal_repository as repo
 from app.schemas.custom_meal import (
     CustomMealCreate,
@@ -16,14 +16,6 @@ from app.services.custom_meal_service import (
 )
 
 router = APIRouter(prefix="/custom-meals", tags=["custom-meals"])
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 @router.get("", response_model=list[CustomMealResponse])

@@ -1,22 +1,12 @@
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
-from slowapi import Limiter
-from slowapi.util import get_remote_address
 
-from app.core.database import SessionLocal
+from app.core.database import get_db
+from app.core.limiter import limiter
 from app.services.food_service import search_food, autocomplete_food
 from app.auth.jwt_handler import get_current_user
 
-limiter = Limiter(key_func=get_remote_address)
 router = APIRouter()
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 @router.get("/foods/search")

@@ -18,8 +18,6 @@ from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
-from slowapi import Limiter
-from slowapi.util import get_remote_address
 
 from app.schemas.user import (
     ForgotPasswordRequest,
@@ -34,21 +32,13 @@ from app.repositories.user_repository import (
 )
 from app.auth.hashing import hash_password, verify_password
 from app.auth.jwt_handler import create_access_token
-from app.core.database import SessionLocal
+from app.core.database import get_db
+from app.core.limiter import limiter
 from app.tasks.email_tasks import send_reset_email
 
-limiter = Limiter(key_func=get_remote_address)
 router = APIRouter()
 RESET_TOKEN_MINUTES = 15
 logger = logging.getLogger(__name__)
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 def _hash_reset_token(token: str) -> str:
@@ -102,12 +92,9 @@ def forgot_password(
         )
         db.commit()
 
-        # CLIENT_URL defaults to http://localhost:3000 (Next.js dev server).
-        # Override with the CLIENT_URL env var in production.
         client_url = os.getenv("CLIENT_URL", "http://localhost:3000").rstrip("/")
         reset_link = f"{client_url}/reset-password/{token}"
 
-        # Dispatch to Celery so the request thread is never blocked by the API call.
         send_reset_email.delay(db_user.email, reset_link)
 
     return {"message": "If that email exists, a reset link has been sent."}
@@ -118,11 +105,7 @@ def forgot_password(
 def verify_reset_token(
     request: Request, token: str, db: Session = Depends(get_db)
 ):
-    """Check whether a password-reset token is valid and unexpired.
-
-    Does NOT consume or delete the token — it is only read.
-    Used by the frontend on page mount to redirect early if the link is stale.
-    """
+    """Check whether a password-reset token is valid and unexpired."""
     db_user = get_user_by_reset_token(db, _hash_reset_token(token))
     if (
         not db_user

@@ -28,9 +28,13 @@ def search_foods_trigram(db: Session, query: str):
 
 
 def autocomplete_foods(db: Session, query: str):
-    words = query.strip().split()
+    # Limit to 5 words to prevent excessively large SQL WHERE clauses
+    words = query.strip().split()[:5]
+    if not words:
+        return []
+
     conditions = " AND ".join([f"name ILIKE :word{i}" for i in range(len(words))])
-    
+
     sql = text(f"""
         SELECT id, name, calories, protein, carbs, fat
         FROM foods
@@ -38,7 +42,7 @@ def autocomplete_foods(db: Session, query: str):
         ORDER BY name
         LIMIT 10
     """)
-    
+
     params = {f"word{i}": f"%{word}%" for i, word in enumerate(words)}
     result = db.execute(sql, params)
     return result.fetchall()

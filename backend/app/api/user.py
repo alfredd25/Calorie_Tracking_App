@@ -1,28 +1,23 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.core.database import SessionLocal
+
+from app.core.database import get_db
 from app.auth.jwt_handler import get_current_user
-from app.models.user import User
+from app.repositories.user_repository import get_user_by_id, update_user_profile
 from app.schemas.profile import UserProfileUpdate
 
 router = APIRouter()
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 @router.get("/me")
 def get_user_profile(
     db: Session = Depends(get_db),
-    current_user: int = Depends(get_current_user)
+    current_user: int = Depends(get_current_user),
 ):
-    user = db.query(User).filter(User.id == current_user).first()
+    user = get_user_by_id(db, current_user)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-        
+
     return {
         "id": user.id,
         "email": user.email,
@@ -39,22 +34,17 @@ def get_user_profile(
         "target_protein": user.target_protein,
         "target_carbs": user.target_carbs,
         "target_fat": user.target_fat,
-        "onboarding_complete": user.onboarding_complete
+        "onboarding_complete": user.onboarding_complete,
     }
 
+
 @router.put("/profile")
-def update_user_profile(
+def update_profile(
     profile: UserProfileUpdate,
     db: Session = Depends(get_db),
-    current_user: int = Depends(get_current_user)
+    current_user: int = Depends(get_current_user),
 ):
-    user = db.query(User).filter(User.id == current_user).first()
+    user = update_user_profile(db, current_user, profile)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-        
-    for key, value in profile.model_dump(exclude_unset=True).items():
-        setattr(user, key, value)
-        
-    db.commit()
-    db.refresh(user)
     return {"message": "Profile updated successfully"}

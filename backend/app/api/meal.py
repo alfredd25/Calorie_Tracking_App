@@ -1,33 +1,21 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from datetime import date
-from enum import Enum
 
-from app.core.database import SessionLocal
+from app.core.database import get_db
 from app.services.meal_service import add_food_to_meal, get_daily_summary
-from app.repositories.meal_repository import create_meal
-from app.repositories.meal_repository import remove_meal_item, get_weekly_summary, get_streak
+from app.repositories.meal_repository import (
+    create_meal,
+    remove_meal_item,
+    get_weekly_summary,
+    get_streak,
+)
 from app.auth.jwt_handler import get_current_user
-from pydantic import BaseModel, field_validator
 from app.models.meal import Meal
-from app.schemas.meal import MealListResponse
+from app.schemas.meal import MealListResponse, MealType
+from pydantic import BaseModel, field_validator
 
 router = APIRouter()
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-class MealType(str, Enum):
-    breakfast = "breakfast"
-    lunch = "lunch"
-    dinner = "dinner"
-    snack = "snack"
 
 
 class CreateMealRequest(BaseModel):
@@ -42,7 +30,7 @@ class AddFoodRequest(BaseModel):
 
     @field_validator("quantity")
     @classmethod
-    def quantity_must_be_positive(cls, v):
+    def quantity_must_be_positive(cls, v: float) -> float:
         if v <= 0:
             raise ValueError("quantity must be greater than 0")
         return v
