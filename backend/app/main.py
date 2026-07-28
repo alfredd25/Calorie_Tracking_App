@@ -1,6 +1,6 @@
 import os
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
@@ -16,6 +16,12 @@ app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 client_url = os.getenv("CLIENT_URL", "http://localhost:5173")
+
+# Comma-separated list of CIDRs/IPs allowed to access internal monitoring routes.
+# Defaults to localhost only. Set via METRICS_ALLOWED_IPS in the environment.
+_metrics_allowed_ips: set[str] = set(
+    filter(None, os.getenv("METRICS_ALLOWED_IPS", "127.0.0.1,::1").split(","))
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -39,4 +45,16 @@ app.include_router(weight.router, prefix="/weight", tags=["weight"])
 app.include_router(custom_food.router)
 app.include_router(custom_meal.router)
 
-Instrumentator().instrument(app).expose(app)
+# Instrument but do not expose the /metrics endpoint automatically;
+# we expose it manually so we can restrict access to internal callers only.
+instrumentator = Instrumentator().instrument(app)
+
+
+@app.get("/metrics", include_in_schema=False)
+async def metrics(request: Request) -> Response:
+    client_ip = request.client.host if request.client else ""
+    if client_ip not in _metrics_allowed_ips:
+        return Response(status_code=status.HTTP_403_FORBIDDEN)
+    from prometheus_client import CONTENT_TYPE_LATEST, generate_latest  # noqa: PLC0415
+    return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)
+

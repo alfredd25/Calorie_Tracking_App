@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        EC2_HOST = '32.236.142.0'
+        EC2_HOST = credentials('ec2-host')
         EC2_USER = 'ubuntu'
         NEXT_PUBLIC_API_URL = 'https://nutritracks.tech/api'
         DOCKER_HUB_CREDENTIALS = credentials('dockerhub-credentials')
