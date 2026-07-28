@@ -1,21 +1,45 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-primary: #22c55e;
+  /* Brand */
+  --color-primary: #18181b;
   --color-primary-foreground: #ffffff;
-  --color-background: #f8fafc;
-  --color-foreground: #0f172a;
+
+  /* Accent — used sparingly for progress/data */
+  --color-accent: #16a34a;
+  --color-accent-light: #f0fdf4;
+
+  /* Surface */
+  --color-background: #fafafa;
+  --color-surface: #ffffff;
+  --color-surface-raised: #f4f4f5;
+
+  /* Text */
+  --color-foreground: #09090b;
+  --color-muted: #71717a;
+  --color-subtle: #a1a1aa;
+
+  /* Borders */
+  --color-border: #e4e4e7;
+  --color-border-strong: #d4d4d8;
+
+  /* Shadcn compat */
   --color-card: #ffffff;
-  --color-card-foreground: #0f172a;
-  --color-border: #e2e8f0;
-  --color-input: #e2e8f0;
-  --color-ring: #22c55e;
-  
-  --radius-sm: 0.5rem;
-  --radius-md: 0.75rem;
-  --radius-lg: 1rem;
-  --radius-xl: 1.5rem;
-  --radius-2xl: 2rem;
+  --color-card-foreground: #09090b;
+  --color-input: #e4e4e7;
+  --color-ring: #18181b;
+  --color-secondary: #f4f4f5;
+  --color-secondary-foreground: #18181b;
+  --color-destructive: #dc2626;
+  --color-muted-foreground: #71717a;
+
+  /* Radius — tighter, more intentional */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+  --radius: 0.5rem;
 }
 
 :root {
@@ -25,10 +49,14 @@
   --card-foreground: var(--color-card-foreground);
   --primary: var(--color-primary);
   --primary-foreground: var(--color-primary-foreground);
+  --secondary: var(--color-secondary);
+  --secondary-foreground: var(--color-secondary-foreground);
+  --muted: var(--color-surface-raised);
+  --muted-foreground: var(--color-muted);
   --border: var(--color-border);
   --input: var(--color-input);
   --ring: var(--color-ring);
-  --radius: 1rem;
+  --radius: 0.5rem;
 }
 
 @layer base {
@@ -36,6 +64,10 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground antialiased font-sans;
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  h1, h2, h3, h4 {
+    letter-spacing: -0.02em;
   }
 }

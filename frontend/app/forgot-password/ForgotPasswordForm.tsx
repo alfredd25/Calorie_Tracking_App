@@ -4,10 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { forgotPassword } from "@/services/api";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 function getErrorMessage(err: unknown, fallback: string) {
   if (typeof err === "object" && err !== null && "detail" in err) {
@@ -19,22 +15,20 @@ function getErrorMessage(err: unknown, fallback: string) {
 
 export default function ForgotPasswordForm() {
   const searchParams = useSearchParams();
-
-  const [email, setEmail]     = useState("");
+  const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-  const [error, setError]     = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [banner, setBanner]   = useState("");
+  const [banner, setBanner] = useState("");
 
-  // Show a banner when redirected here from an expired/invalid reset link.
   useEffect(() => {
     if (searchParams.get("error") === "invalid_token") {
       setBanner("This reset link has expired or is invalid. Please request a new one.");
     }
   }, [searchParams]);
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
     setLoading(true);
     setError("");
     setMessage("");
@@ -49,48 +43,68 @@ export default function ForgotPasswordForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-2xl text-center">Forgot Password</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {/* Expired-link banner */}
+    <div className="min-h-screen bg-background flex items-center justify-center px-4">
+      <div className="w-full max-w-sm">
+        <div className="mb-8 text-center">
+          <span className="text-2xl font-semibold tracking-tight">NutriTrack</span>
+          <p className="mt-1.5 text-sm text-muted">Reset your password</p>
+        </div>
+
+        <div className="bg-white border border-border rounded-xl p-8 shadow-sm">
           {banner && (
-            <div
-              role="alert"
-              className="mb-4 rounded-md bg-amber-50 border border-amber-300 px-4 py-3 text-sm text-amber-800"
-            >
+            <div role="alert" className="mb-5 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2.5">
               {banner}
             </div>
           )}
 
           <form className="space-y-4" onSubmit={handleSubmit}>
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
+            <div className="space-y-1.5">
+              <label htmlFor="email" className="text-xs font-medium text-muted uppercase tracking-wider">
+                Email
+              </label>
+              <input
                 id="email"
                 type="email"
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                className="w-full px-3 py-2.5 bg-background border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-foreground/10 focus:border-foreground/30 placeholder:text-subtle transition-all"
               />
             </div>
-            {message && <p className="text-sm text-green-600">{message}</p>}
-            {error   && <p className="text-sm text-red-500">{error}</p>}
-            <Button className="w-full" type="submit" disabled={loading}>
-              {loading ? "Sending…" : "Send reset link"}
-            </Button>
-            <p className="text-center text-sm text-slate-500">
+
+            {message && (
+              <p className="text-sm text-green-700 bg-green-50 border border-green-100 rounded-lg px-3 py-2">
+                {message}
+              </p>
+            )}
+            {error && (
+              <p className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+                {error}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-2.5 bg-foreground text-white rounded-lg text-sm font-medium hover:bg-zinc-700 disabled:opacity-50 transition-colors flex justify-center items-center"
+            >
+              {loading ? (
+                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                "Send reset link"
+              )}
+            </button>
+
+            <p className="text-center text-sm text-muted pt-1">
               Remembered it?{" "}
-              <Link href="/login" className="text-blue-600 hover:underline">
-                Login
+              <Link href="/" className="text-foreground font-medium hover:underline underline-offset-2 transition-colors">
+                Sign in
               </Link>
             </p>
           </form>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

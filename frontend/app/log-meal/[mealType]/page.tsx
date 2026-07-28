@@ -26,7 +26,7 @@ import {
   CustomMealInput,
   MealType,
 } from "@/types/custom";
-import { ChevronLeft, MoreVertical, Plus } from "lucide-react";
+import { ChevronLeft, Plus } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -149,191 +149,102 @@ export default function LogMealPage() {
   };
 
   return (
-    <div className="-mx-4 -mt-8 -mb-20 min-h-[calc(100vh-4rem)] bg-slate-50 text-slate-900 pb-24">
+    <div className="-mx-4 -mt-8 -mb-24 min-h-[calc(100vh-3.5rem)] bg-background pb-24">
       {/* Header */}
-      <header className="flex items-center justify-between px-4 py-4 sticky top-16 bg-slate-50/95 backdrop-blur-sm border-b border-slate-200 z-10">
+      <header className="flex items-center justify-between px-4 py-3.5 sticky top-14 bg-white/90 backdrop-blur-md border-b border-border z-10">
         <button
           onClick={() => router.back()}
           aria-label="Back"
-          className="p-1.5 -ml-1.5 text-slate-700 hover:text-primary"
+          className="text-muted hover:text-foreground transition-colors"
         >
-          <ChevronLeft className="w-6 h-6" />
+          <ChevronLeft className="w-5 h-5" />
         </button>
-        <h1 className="text-xl font-semibold flex-1 ml-2 text-slate-900">{titleCase}</h1>
-        <div className="flex items-center gap-2 ml-auto">
-          <button
-            aria-label="Add"
-            onClick={() => {
-              setEditingFood(null);
-              if (activeTab === "my-meals") {
-                setEditingMeal(null);
-                setMealModalOpen(true);
-              } else {
-                setFoodModalOpen(true);
-              }
-            }}
-            className="p-1.5 text-slate-700 hover:text-primary"
-          >
-            <Plus className="w-6 h-6" />
-          </button>
-          <button aria-label="More" className="p-1.5 text-slate-700 hover:text-primary">
-            <MoreVertical className="w-6 h-6" />
-          </button>
-        </div>
+        <h1 className="text-sm font-semibold flex-1 ml-3 text-foreground">{titleCase}</h1>
+        <button
+          aria-label="Add"
+          onClick={() => {
+            setEditingFood(null);
+            if (activeTab === "my-meals") { setEditingMeal(null); setMealModalOpen(true); }
+            else setFoodModalOpen(true);
+          }}
+          className="text-muted hover:text-foreground transition-colors"
+        >
+          <Plus className="w-5 h-5" />
+        </button>
       </header>
 
-      <div className="px-4">
-        {/* Tabs */}
-        <div className="mt-2">
-          <TabBar active={activeTab} onChange={setActiveTab} />
-        </div>
+      <div className="px-4 pt-4 space-y-4">
+        <TabBar active={activeTab} onChange={setActiveTab} />
 
-        {/* Content */}
-        <div className="mt-4">
+        <div>
           {loading ? (
-            <p className="text-center text-slate-400 py-12 text-sm">Loading...</p>
+            <p className="text-center text-subtle py-12 text-sm">Loading...</p>
           ) : activeTab === "favourites" ? (
-            <div className="text-center text-slate-400 py-16 text-sm">
-              Coming soon.
-            </div>
+            <p className="text-center text-subtle py-16 text-sm">Coming soon</p>
           ) : activeTab === "my-foods" ? (
             customFoods.length === 0 ? (
-              <EmptyState
-                message="Log meals faster by adding foods that you eat often."
-                buttonLabel="Add food"
-                onAction={() => {
-                  setEditingFood(null);
-                  setFoodModalOpen(true);
-                }}
-              />
+              <EmptyState message="Save foods you eat often to log them faster." buttonLabel="Add food"
+                onAction={() => { setEditingFood(null); setFoodModalOpen(true); }} />
             ) : (
               <div className="flex flex-col gap-2 pb-24">
                 {customFoods.map((f) => (
-                  <CustomFoodCard
-                    key={f.id}
-                    food={f}
-                    onLog={handleLogFood}
-                    onEdit={(food) => {
-                      setEditingFood(food);
-                      setFoodModalOpen(true);
-                    }}
-                    onDelete={handleDeleteFood}
-                  />
+                  <CustomFoodCard key={f.id} food={f} onLog={handleLogFood}
+                    onEdit={(food) => { setEditingFood(food); setFoodModalOpen(true); }}
+                    onDelete={handleDeleteFood} />
                 ))}
               </div>
             )
           ) : customMeals.length === 0 ? (
-            <EmptyState
-              message="Group foods you eat together into meals you can log in one tap."
-              buttonLabel="Add meal"
-              onAction={() => {
-                setEditingMeal(null);
-                setMealModalOpen(true);
-              }}
-            />
+            <EmptyState message="Group foods into meals and log them in one tap." buttonLabel="Add meal"
+              onAction={() => { setEditingMeal(null); setMealModalOpen(true); }} />
           ) : (
             <div className="flex flex-col gap-2 pb-24">
               {customMeals.map((m) => (
-                <CustomMealCard
-                  key={m.id}
-                  meal={m}
-                  onLog={handleLogMeal}
-                  onEdit={(meal) => {
-                    setEditingMeal(meal);
-                    setMealModalOpen(true);
-                  }}
-                  onDelete={handleDeleteMeal}
-                />
+                <CustomMealCard key={m.id} meal={m} onLog={handleLogMeal}
+                  onEdit={(meal) => { setEditingMeal(meal); setMealModalOpen(true); }}
+                  onDelete={handleDeleteMeal} />
               ))}
             </div>
           )}
         </div>
 
-        {/* Floating add button when there is content */}
-        {!loading &&
-          activeTab === "my-foods" &&
-          customFoods.length > 0 && (
-            <FloatingAddButton
-              label="Add food"
-              onClick={() => {
-                setEditingFood(null);
-                setFoodModalOpen(true);
-              }}
-            />
-          )}
-        {!loading &&
-          activeTab === "my-meals" &&
-          customMeals.length > 0 && (
-            <FloatingAddButton
-              label="Add meal"
-              onClick={() => {
-                setEditingMeal(null);
-                setMealModalOpen(true);
-              }}
-            />
-          )}
+        {!loading && activeTab === "my-foods" && customFoods.length > 0 && (
+          <FloatingAddButton label="Add food" onClick={() => { setEditingFood(null); setFoodModalOpen(true); }} />
+        )}
+        {!loading && activeTab === "my-meals" && customMeals.length > 0 && (
+          <FloatingAddButton label="Add meal" onClick={() => { setEditingMeal(null); setMealModalOpen(true); }} />
+        )}
       </div>
 
-      {/* Toast */}
       {toast && (
-        <div
-          role="status"
-          aria-live="polite"
-          className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-4 py-2 rounded-full text-sm shadow-lg z-50"
-        >
+        <div role="status" aria-live="polite"
+          className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-foreground text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg z-50">
           {toast}
         </div>
       )}
 
-      {/* Custom food modal */}
-      <Modal
-        open={foodModalOpen}
-        onClose={() => {
-          setFoodModalOpen(false);
-          setEditingFood(null);
-        }}
-        title={editingFood ? "Edit food" : "Add food"}
-      >
-        <CustomFoodForm
-          initial={editingFood}
+      <Modal open={foodModalOpen} onClose={() => { setFoodModalOpen(false); setEditingFood(null); }}
+        title={editingFood ? "Edit food" : "Add food"}>
+        <CustomFoodForm initial={editingFood}
           onSubmit={editingFood ? handleUpdateFood : handleCreateFood}
-          submitLabel={editingFood ? "Update food" : "Save food"}
-        />
+          submitLabel={editingFood ? "Update food" : "Save food"} />
       </Modal>
 
-      {/* Custom meal modal */}
-      <Modal
-        open={mealModalOpen}
-        onClose={() => {
-          setMealModalOpen(false);
-          setEditingMeal(null);
-        }}
-        title={editingMeal ? "Edit meal" : "Add meal"}
-      >
-        <CustomMealForm
-          initial={editingMeal}
-          customFoods={customFoods}
+      <Modal open={mealModalOpen} onClose={() => { setMealModalOpen(false); setEditingMeal(null); }}
+        title={editingMeal ? "Edit meal" : "Add meal"}>
+        <CustomMealForm initial={editingMeal} customFoods={customFoods}
           onSubmit={editingMeal ? handleUpdateMeal : handleCreateMeal}
-          submitLabel={editingMeal ? "Update meal" : "Save meal"}
-        />
+          submitLabel={editingMeal ? "Update meal" : "Save meal"} />
       </Modal>
     </div>
   );
 }
 
-function FloatingAddButton({
-  label,
-  onClick,
-}: {
-  label: string;
-  onClick: () => void;
-}) {
+function FloatingAddButton({ label, onClick }: { label: string; onClick: () => void }) {
   return (
-    <button
-      onClick={onClick}
-      className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-primary hover:bg-green-600 text-primary-foreground font-semibold px-8 py-3 rounded-full flex items-center gap-2 shadow-lg shadow-green-900/30 z-40"
-    >
-      <Plus className="w-4 h-4" />
+    <button onClick={onClick}
+      className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-foreground hover:bg-zinc-700 text-white text-sm font-medium px-6 py-2.5 rounded-full flex items-center gap-2 shadow-lg z-40 transition-colors">
+      <Plus className="w-3.5 h-3.5" />
       {label}
     </button>
   );

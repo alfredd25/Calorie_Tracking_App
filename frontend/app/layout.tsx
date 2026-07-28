@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Geist } from "next/font/google";
 import "./globals.css";
 import { Navigation } from "@/components/Navigation";
 
-const inter = Inter({ subsets: ["latin"] });
+const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
 
 export const metadata: Metadata = {
   title: "NutriTrack",
-  description: "Modern Calorie Tracker",
+  description: "Clean, minimal calorie tracking",
 };
 
 export default function RootLayout({
@@ -16,10 +16,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} min-h-screen bg-slate-50 text-slate-900 pb-20 pt-16`}>
+    <html lang="en" className={geist.variable}>
+      <body className={`${geist.className} min-h-screen bg-background text-foreground pb-24 pt-14`}>
         <Navigation />
-        <main className="max-w-screen-md mx-auto pt-8 px-4">
+        <main className="max-w-2xl mx-auto px-4 pt-8">
           {children}
         </main>
       </body>

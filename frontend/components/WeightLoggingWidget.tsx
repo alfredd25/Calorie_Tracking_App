@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Scale, TrendingUp, TrendingDown, Minus, Loader2 } from "lucide-react";
+import { Loader2, TrendingUp, TrendingDown, Minus } from "lucide-react";
 
 export function WeightLoggingWidget({ onLog }: { onLog?: () => void }) {
   const [weightMode, setWeightMode] = useState<"kg" | "lbs">("kg");
@@ -16,12 +16,9 @@ export function WeightLoggingWidget({ onLog }: { onLog?: () => void }) {
     try {
       const token = localStorage.getItem("token");
       const res = await fetch("/api/weight/history", {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
-      if (res.ok) {
-        const data = await res.json();
-        setHistory(data);
-      }
+      if (res.ok) setHistory(await res.json());
     } catch (e) {
       console.error(e);
     }
@@ -30,17 +27,19 @@ export function WeightLoggingWidget({ onLog }: { onLog?: () => void }) {
   const handleLogWeight = async () => {
     if (!weightInput) return;
     setLoading(true);
-
     try {
       const token = localStorage.getItem("token");
-      const today = new Date().toLocaleDateString('en-CA');
-      
-      const finalWeightKg = weightMode === "kg" ? Number(weightInput) : Number(weightInput) * 0.453592;
+      const today = new Date().toLocaleDateString("en-CA");
+      const finalWeightKg =
+        weightMode === "kg" ? Number(weightInput) : Number(weightInput) * 0.453592;
 
       const res = await fetch("/api/weight/log", {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ date: today, weight_kg: finalWeightKg })
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ date: today, weight_kg: finalWeightKg }),
       });
 
       if (res.ok) {
@@ -55,78 +54,89 @@ export function WeightLoggingWidget({ onLog }: { onLog?: () => void }) {
     }
   };
 
-  const getTrendIcon = (current: number, previous: number) => {
-    if (current < previous) return <TrendingDown className="w-3 h-3 text-green-500" />;
-    if (current > previous) return <TrendingUp className="w-3 h-3 text-orange-500" />;
-    return <Minus className="w-3 h-3 text-slate-400" />;
-  };
-
-  const displayWeight = (kg: number) => {
-    return weightMode === "kg" ? kg.toFixed(1) : (kg / 0.453592).toFixed(1);
-  };
+  const displayWeight = (kg: number) =>
+    weightMode === "kg" ? kg.toFixed(1) : (kg / 0.453592).toFixed(1);
 
   return (
-    <div className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 mb-6">
+    <div className="bg-white border border-border rounded-xl p-5 mb-5">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-bold text-slate-800 flex items-center">
-          <Scale className="w-5 h-5 mr-2 text-primary" />
-          Today's Weight
-        </h3>
-        
-        <div className="flex bg-slate-100 rounded-lg p-1">
-          <button onClick={() => setWeightMode("kg")} className={`px-2 py-1 text-xs font-bold rounded-md transition-colors ${weightMode === "kg" ? "bg-white shadow text-slate-900" : "text-slate-500"}`}>kg</button>
-          <button onClick={() => setWeightMode("lbs")} className={`px-2 py-1 text-xs font-bold rounded-md transition-colors ${weightMode === "lbs" ? "bg-white shadow text-slate-900" : "text-slate-500"}`}>lbs</button>
+        <p className="text-xs font-medium text-muted uppercase tracking-wider">Weight</p>
+
+        <div className="flex bg-surface-raised rounded-md p-0.5 text-xs">
+          {(["kg", "lbs"] as const).map((unit) => (
+            <button
+              key={unit}
+              onClick={() => setWeightMode(unit)}
+              className={`px-2.5 py-1 rounded transition-colors font-medium ${
+                weightMode === unit
+                  ? "bg-white shadow-sm text-foreground"
+                  : "text-muted hover:text-foreground"
+              }`}
+            >
+              {unit}
+            </button>
+          ))}
         </div>
       </div>
 
-      <div className="flex gap-3 mb-6">
-        <input 
-          type="number" 
+      <div className="flex gap-2">
+        <input
+          type="number"
           step="0.1"
-          placeholder={`e.g. ${weightMode === "kg" ? "70.5" : "155.0"}`}
+          placeholder={weightMode === "kg" ? "70.5" : "155.0"}
           value={weightInput}
           onChange={(e) => setWeightInput(Number(e.target.value) || "")}
-          className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 font-medium focus:ring-2 focus:ring-primary/20 focus:outline-none"
+          className="flex-1 bg-background border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-foreground/10 focus:border-foreground/30 placeholder:text-subtle transition-all"
         />
-        <button 
+        <button
           onClick={handleLogWeight}
           disabled={loading || !weightInput}
-          className="bg-primary hover:bg-green-600 disabled:opacity-50 text-white font-bold px-5 rounded-xl transition-colors shadow-md shadow-green-200 flex items-center"
+          className="bg-foreground text-white text-sm font-medium px-4 rounded-lg disabled:opacity-40 transition-colors hover:bg-zinc-700 flex items-center"
         >
-          {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Log Weight"}
+          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Log"}
         </button>
       </div>
 
       {history.length > 0 && (
-        <div>
-          <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Last 7 Days</h4>
-          <div className="flex justify-between items-end h-24 gap-1">
+        <div className="mt-4">
+          <p className="text-[11px] font-medium text-subtle uppercase tracking-wider mb-2">
+            Recent
+          </p>
+          <div className="flex items-end gap-1 h-16">
             {history.slice(-7).map((log, index) => {
-              // Very simple sparkline logic relative to min/max of the recent dataset
-              const recentLogs = history.slice(-7).map(l => l.weight_kg);
-              const minLog = Math.min(...recentLogs) - 2;
-              const maxLog = Math.max(...recentLogs) + 2;
+              const recentLogs = history.slice(-7).map((l) => l.weight_kg);
+              const minLog = Math.min(...recentLogs) - 1;
+              const maxLog = Math.max(...recentLogs) + 1;
               const range = maxLog - minLog || 1;
-              const heightPct = Math.max(10, ((log.weight_kg - minLog) / range) * 100);
+              const heightPct = Math.max(15, ((log.weight_kg - minLog) / range) * 100);
               const prevLog = index > 0 ? recentLogs[index - 1] : log.weight_kg;
-              
-              const dateObj = new Date(log.date);
-              const dayStr = dateObj.toLocaleDateString("en-US", { weekday: "short", timeZone: 'UTC' });
+              const diff = log.weight_kg - prevLog;
 
               return (
-                <div key={log.id} className="flex flex-col items-center flex-1 group relative">
-                  <div className="opacity-0 group-hover:opacity-100 absolute -top-10 bg-slate-800 text-white text-xs font-bold px-2 py-1 rounded transition-opacity whitespace-nowrap z-10">
-                    {displayWeight(log.weight_kg)} {weightMode}
-                  </div>
-                  <div className="w-full bg-slate-100 rounded-t-sm flex items-end justify-center">
-                    <div 
-                      className={`w-full rounded-t-sm transition-all duration-500 flex justify-center items-start pt-1 ${index === history.length - 1 ? 'bg-primary/80' : 'bg-slate-200'}`} 
-                      style={{ height: `${heightPct}%` }}
-                    >
-                      {getTrendIcon(log.weight_kg, prevLog)}
-                    </div>
-                  </div>
-                  <span className="text-[10px] font-bold text-slate-400 mt-1">{dayStr}</span>
+                <div
+                  key={log.id}
+                  className="flex flex-col items-center flex-1 gap-0.5 group relative"
+                  title={`${displayWeight(log.weight_kg)} ${weightMode}`}
+                >
+                  <div
+                    className={`w-full rounded-sm transition-all duration-300 ${
+                      index === history.slice(-7).length - 1
+                        ? "bg-foreground"
+                        : "bg-border"
+                    }`}
+                    style={{ height: `${heightPct}%` }}
+                  />
+                  {index > 0 && (
+                    <span className="text-[9px] text-subtle">
+                      {diff < 0 ? (
+                        <TrendingDown className="w-2.5 h-2.5 text-green-600" />
+                      ) : diff > 0 ? (
+                        <TrendingUp className="w-2.5 h-2.5 text-amber-500" />
+                      ) : (
+                        <Minus className="w-2.5 h-2.5 text-subtle" />
+                      )}
+                    </span>
+                  )}
                 </div>
               );
             })}

@@ -15,73 +15,66 @@ export function CustomMealCard({ meal, onLog, onEdit, onDelete }: CustomMealCard
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+    <div className="bg-white border border-border rounded-xl overflow-hidden">
       <button
         type="button"
         onClick={() => setExpanded((v) => !v)}
         aria-expanded={expanded}
-        className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-slate-50 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-3.5 text-left hover:bg-surface-raised transition-colors"
       >
         <div className="flex-1 min-w-0">
-          <p className="text-slate-900 font-medium truncate">{meal.name}</p>
-          <p className="text-xs text-primary mt-0.5 font-medium">
-            {Math.round(meal.total_kcal)} kcal · {meal.items.length} item
-            {meal.items.length === 1 ? "" : "s"}
+          <p className="text-sm font-medium text-foreground truncate">{meal.name}</p>
+          <p className="text-xs text-muted mt-0.5">
+            {Math.round(meal.total_kcal)} kcal &middot; {meal.items.length} item{meal.items.length !== 1 ? "s" : ""}
           </p>
         </div>
         <ChevronDown
-          className={`w-5 h-5 text-slate-400 transition-transform ${
-            expanded ? "rotate-180" : ""
-          }`}
+          className={`w-4 h-4 text-subtle transition-transform shrink-0 ml-2 ${expanded ? "rotate-180" : ""}`}
         />
       </button>
 
       {expanded && (
-        <div className="px-4 pb-4 pt-1 border-t border-slate-100">
+        <div className="px-4 pb-4 pt-1 border-t border-border">
           <div className="grid grid-cols-3 gap-2 my-3">
-            <Macro label="Protein" value={meal.total_protein} />
-            <Macro label="Carbs" value={meal.total_carbs} />
-            <Macro label="Fat" value={meal.total_fat} />
+            {[
+              { label: "Protein", value: meal.total_protein },
+              { label: "Carbs",   value: meal.total_carbs   },
+              { label: "Fat",     value: meal.total_fat     },
+            ].map((m) => (
+              <div key={m.label} className="bg-surface-raised rounded-lg px-3 py-2.5">
+                <p className="text-[10px] text-muted uppercase tracking-wider mb-1">{m.label}</p>
+                <p className="text-sm font-medium text-foreground">
+                  {Math.round(m.value * 10) / 10}
+                  <span className="text-subtle text-xs ml-0.5">g</span>
+                </p>
+              </div>
+            ))}
           </div>
 
           <div className="flex items-center gap-2">
             <button
               onClick={() => onLog(meal)}
-              className="flex-1 flex items-center justify-center gap-1.5 bg-primary text-primary-foreground font-semibold py-2 rounded-full text-sm hover:bg-green-600 transition-colors"
+              className="flex-1 flex items-center justify-center gap-1.5 bg-foreground text-white text-sm font-medium py-2 rounded-lg hover:bg-zinc-700 transition-colors"
             >
-              <Plus className="w-4 h-4" /> Log meal
+              <Plus className="w-3.5 h-3.5" /> Log meal
             </button>
             <button
               onClick={() => onEdit(meal)}
               aria-label={`Edit ${meal.name}`}
-              className="p-2 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-primary transition-colors"
+              className="p-2 rounded-lg bg-surface-raised text-muted hover:text-foreground hover:bg-border transition-colors"
             >
-              <Pencil className="w-4 h-4" />
+              <Pencil className="w-3.5 h-3.5" />
             </button>
             <button
               onClick={() => onDelete(meal)}
               aria-label={`Delete ${meal.name}`}
-              className="p-2 rounded-full bg-slate-100 text-red-500 hover:bg-red-50 transition-colors"
+              className="p-2 rounded-lg bg-surface-raised text-muted hover:text-red-500 transition-colors"
             >
-              <Trash2 className="w-4 h-4" />
+              <Trash2 className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
       )}
-    </div>
-  );
-}
-
-function Macro({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="bg-slate-50 border border-slate-100 rounded-lg px-3 py-2">
-      <p className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">
-        {label}
-      </p>
-      <p className="text-sm font-semibold text-slate-900">
-        {Math.round(value * 10) / 10}
-        <span className="text-slate-400 text-xs ml-0.5">g</span>
-      </p>
     </div>
   );
 }

@@ -3,31 +3,29 @@ import React, { useState, useEffect } from "react";
 import { MealSection, LoggedFood } from "@/components/MealSection";
 import { WeightLoggingWidget } from "@/components/WeightLoggingWidget";
 
+const MEAL_TYPES = ["Breakfast", "Lunch", "Dinner", "Snack"];
+
 export default function LogMealsPage() {
   const [foods, setFoods] = useState<any[]>([]);
-  const [dailyTotals, setDailyTotals] = useState({ calories: 0, protein: 0, carbs: 0, fat: 0 });
-  const mealTypes = ["Breakfast", "Lunch", "Dinner", "Snack"];
+  const [dailyTotals, setDailyTotals] = useState({
+    calories: 0,
+    protein: 0,
+    carbs: 0,
+    fat: 0,
+  });
 
   const fetchMeals = async () => {
     try {
       const token = localStorage.getItem("token");
-      const today = new Date().toLocaleDateString('en-CA');
+      const today = new Date().toLocaleDateString("en-CA");
 
-      const res = await fetch(`/api/meals/list?date=${today}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setFoods(data);
-      }
+      const [mealsRes, sumRes] = await Promise.all([
+        fetch(`/api/meals/list?date=${today}`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`/api/meals/day-summary?date=${today}`, { headers: { Authorization: `Bearer ${token}` } }),
+      ]);
 
-      const summaryRes = await fetch(`/api/meals/day-summary?date=${today}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (summaryRes.ok) {
-        const sumData = await summaryRes.json();
-        setDailyTotals(sumData);
-      }
+      if (mealsRes.ok) setFoods(await mealsRes.json());
+      if (sumRes.ok) setDailyTotals(await sumRes.json());
     } catch (e) {
       console.error(e);
     }
@@ -39,11 +37,11 @@ export default function LogMealsPage() {
 
   const getLoggedFoodsForType = (type: string): LoggedFood[] => {
     const meal = foods.find((m: any) => m.meal_type === type.toLowerCase());
-    if (!meal || !meal.items) return [];
+    if (!meal?.items) return [];
     return meal.items.map((item: any) => ({
       id: item.id,
       food_id: item.food_id,
-      name: item.food?.name || "Unknown Food",
+      name: item.food?.name || "Unknown",
       grams: item.quantity,
       calories: item.calories,
       protein: item.protein,
@@ -52,19 +50,42 @@ export default function LogMealsPage() {
     }));
   };
 
-  // Totals are fetched from the server.
+  const totalsData = [
+    { label: "Calories", value: Math.round(dailyTotals.calories), unit: "kcal" },
+    { label: "Protein",  value: Math.round(dailyTotals.protein),  unit: "g" },
+    { label: "Carbs",    value: Math.round(dailyTotals.carbs),    unit: "g" },
+    { label: "Fat",      value: Math.round(dailyTotals.fat),      unit: "g" },
+  ];
 
   return (
-    <div className="flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900 mb-2">Log Meals</h1>
-        <p className="text-slate-500 font-medium">Add your foods for today</p>
+    <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-bottom-3 duration-400 pb-8">
+      {/* Header */}
+      <div className="pt-2">
+        <h1 className="text-2xl font-semibold tracking-tight">Log meals</h1>
+        <p className="text-sm text-muted mt-0.5">
+          {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
+        </p>
       </div>
-      
+
+      {/* Daily totals */}
+      <div className="bg-white border border-border rounded-xl overflow-hidden">
+        <div className="grid grid-cols-4 divide-x divide-border">
+          {totalsData.map((t) => (
+            <div key={t.label} className="px-4 py-4">
+              <p className="text-xs text-muted mb-1">{t.label}</p>
+              <p className="text-lg font-semibold tracking-tight">{t.value}</p>
+              <p className="text-xs text-subtle">{t.unit}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Weight */}
       <WeightLoggingWidget />
 
-      <div className="space-y-4">
-        {mealTypes.map(type => (
+      {/* Meals */}
+      <div className="space-y-3">
+        {MEAL_TYPES.map((type) => (
           <MealSection
             key={type}
             mealType={type}
@@ -72,28 +93,6 @@ export default function LogMealsPage() {
             onMealUpdated={fetchMeals}
           />
         ))}
-      </div>
-
-      <div className="mt-8 bg-slate-900 p-6 rounded-3xl shadow-xl border border-slate-800 text-white">
-        <h3 className="text-lg font-bold mb-4">Today's Total</h3>
-        <div className="grid grid-cols-4 gap-4">
-          <div className="flex flex-col">
-            <span className="text-slate-400 text-[10px] md:text-xs uppercase font-bold tracking-wider mb-1">Calories</span>
-            <span className="text-xl md:text-2xl font-black text-green-400">{Math.round(dailyTotals.calories)}</span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-slate-400 text-[10px] md:text-xs uppercase font-bold tracking-wider mb-1">Protein</span>
-            <span className="text-lg md:text-xl font-bold">{Math.round(dailyTotals.protein)}g</span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-slate-400 text-[10px] md:text-xs uppercase font-bold tracking-wider mb-1">Carbs</span>
-            <span className="text-lg md:text-xl font-bold">{Math.round(dailyTotals.carbs)}g</span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-slate-400 text-[10px] md:text-xs uppercase font-bold tracking-wider mb-1">Fat</span>
-            <span className="text-lg md:text-xl font-bold">{Math.round(dailyTotals.fat)}g</span>
-          </div>
-        </div>
       </div>
     </div>
   );

@@ -1,8 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Card, CardContent } from "@/components/ui/card";
-import { Utensils } from "lucide-react";
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -58,87 +56,89 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[70vh] px-4 -mt-10">
-      <div className="flex flex-col items-center mb-8">
-        <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-green-200 mb-4">
-          <Utensils className="w-8 h-8 text-white" />
+    <div className="min-h-screen bg-background flex items-center justify-center px-4">
+      <div className="w-full max-w-sm">
+        {/* Wordmark */}
+        <div className="mb-10 text-center">
+          <span className="text-2xl font-semibold tracking-tight text-foreground">NutriTrack</span>
+          <p className="mt-1.5 text-sm text-muted">
+            {isLogin ? "Welcome back" : "Create your account"}
+          </p>
         </div>
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">NutriTrack</h1>
-        <p className="text-slate-500 mt-2">Your smart calorie companion</p>
-      </div>
 
-      <Card className="w-full max-w-sm border-slate-100 shadow-xl shadow-slate-200/50">
-        <CardContent className="px-6 py-8">
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <h2 className="text-xl font-bold text-slate-800 text-center mb-2">
-              {isLogin ? "Welcome back" : "Create an account"}
-            </h2>
-
+        <div className="bg-white border border-border rounded-xl p-8 shadow-sm">
+          <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <div className="p-3 bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl text-center">
+              <div className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2.5">
                 {error}
               </div>
             )}
 
             <div className="space-y-1.5">
-              <label className="text-sm font-semibold text-slate-700 ml-1">Email</label>
+              <label className="text-xs font-medium text-muted uppercase tracking-wider">
+                Email
+              </label>
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm font-medium"
+                className="w-full px-3 py-2.5 bg-background border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-foreground/10 focus:border-foreground/30 transition-all placeholder:text-subtle"
                 placeholder="you@example.com"
               />
             </div>
 
-            <div className="space-y-1.5 mt-2">
-              <label className="text-sm font-semibold text-slate-700 ml-1">Password</label>
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-medium text-muted uppercase tracking-wider">
+                  Password
+                </label>
+                {isLogin && (
+                  <a
+                    href="/forgot-password"
+                    className="text-xs text-muted hover:text-foreground transition-colors"
+                  >
+                    Forgot password?
+                  </a>
+                )}
+              </div>
               <input
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm font-medium"
+                className="w-full px-3 py-2.5 bg-background border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-foreground/10 focus:border-foreground/30 transition-all placeholder:text-subtle"
                 placeholder="••••••••"
               />
-              {isLogin && (
-                <a
-                  href="/forgot-password"
-                  className="block text-sm font-medium text-primary hover:text-green-600 transition-colors ml-1"
-                >
-                  Forgot password?
-                </a>
-              )}
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-primary text-white rounded-xl font-bold tracking-wide shadow-md shadow-green-200 hover:bg-green-600 focus:ring-4 focus:ring-green-100 transition-all mt-4 disabled:opacity-70 flex justify-center"
+              className="w-full mt-2 py-2.5 bg-foreground text-white rounded-lg text-sm font-medium transition-all hover:bg-zinc-700 disabled:opacity-50 flex justify-center items-center"
             >
               {loading ? (
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : isLogin ? (
-                "Sign In"
+                "Sign in"
               ) : (
-                "Sign Up"
+                "Create account"
               )}
             </button>
           </form>
 
-          <div className="mt-6 text-center text-sm font-medium text-slate-500 border-t border-slate-100 pt-6">
-            {isLogin ? "Don't have an account?" : "Already have an account?"}
+          <div className="mt-6 pt-5 border-t border-border text-center text-sm text-muted">
+            {isLogin ? "No account?" : "Already have one?"}
             <button
               type="button"
               onClick={() => { setIsLogin(!isLogin); setError(""); }}
-              className="ml-2 font-bold text-primary hover:text-green-600 transition-colors"
+              className="ml-1.5 text-foreground font-medium hover:underline underline-offset-2 transition-colors"
             >
               {isLogin ? "Sign up" : "Sign in"}
             </button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

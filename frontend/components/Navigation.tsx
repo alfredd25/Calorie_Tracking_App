@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Utensils, LayoutDashboard, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
 
 export function Navigation() {
   const pathname = usePathname();
@@ -16,49 +16,44 @@ export function Navigation() {
     router.push("/");
   };
 
-  return (
-    <nav className="fixed top-0 left-0 right-0 h-16 bg-white shadow-sm border-b border-border z-50 flex items-center justify-between px-6">
-      <div className="flex items-center space-x-2">
-        <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-          <Utensils className="w-4 h-4 text-white" />
-        </div>
-        <span className="text-xl font-bold text-slate-900 tracking-tight">
-          NutriTrack
-        </span>
-      </div>
+  const links = [
+    { href: "/welcome", label: "Home" },
+    { href: "/log-meals", label: "Log" },
+    { href: "/create-meal", label: "Create" },
+    { href: "/dashboard", label: "Dashboard" },
+  ];
 
-      <div className="flex items-center space-x-6">
-        <Link 
-          href="/welcome" 
-          className={`text-sm font-medium transition-colors hover:text-primary ${pathname === '/welcome' ? 'text-primary' : 'text-slate-500'}`}
-        >
-          Welcome
+  return (
+    <nav className="fixed top-0 left-0 right-0 h-14 bg-white/90 backdrop-blur-md border-b border-border z-50">
+      <div className="max-w-2xl mx-auto h-full px-4 flex items-center justify-between">
+        <Link href="/welcome" className="text-sm font-semibold tracking-tight text-foreground">
+          NutriTrack
         </Link>
-        <Link 
-          href="/log-meals" 
-          className={`text-sm font-medium transition-colors hover:text-primary ${pathname === '/log-meals' ? 'text-primary' : 'text-slate-500'}`}
-        >
-          Log Meals
-        </Link>
-        <Link
-          href="/create-meal"
-          className={`text-sm font-medium transition-colors hover:text-primary ${pathname?.startsWith('/create-meal') ? 'text-primary' : 'text-slate-500'}`}
-        >
-          Create Meal
-        </Link>
-        <Link 
-          href="/dashboard" 
-          className={`text-sm font-medium transition-colors hover:text-primary ${pathname === '/dashboard' ? 'text-primary' : 'text-slate-500'}`}
-        >
-          Dashboard
-        </Link>
-        
-        <button 
-          onClick={handleLogout}
-          className="ml-4 p-2 text-slate-500 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
-        >
-          <LogOut className="w-5 h-5" />
-        </button>
+
+        <div className="flex items-center gap-6">
+          {links.map((l) => {
+            const active = pathname === l.href || (l.href !== "/welcome" && pathname?.startsWith(l.href));
+            return (
+              <Link
+                key={l.href}
+                href={l.href}
+                className={`text-sm transition-colors ${
+                  active ? "text-foreground font-medium" : "text-muted hover:text-foreground"
+                }`}
+              >
+                {l.label}
+              </Link>
+            );
+          })}
+
+          <button
+            onClick={handleLogout}
+            aria-label="Sign out"
+            className="text-muted hover:text-foreground transition-colors"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
+        </div>
       </div>
     </nav>
   );

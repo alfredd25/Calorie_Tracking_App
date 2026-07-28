@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface AnimatedRingProps {
   progress: number;
@@ -14,8 +14,8 @@ export function AnimatedRing({
   goal,
   label,
   colorClass,
-  size = 120,
-  strokeWidth = 10,
+  size = 88,
+  strokeWidth = 6,
 }: AnimatedRingProps) {
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
@@ -23,21 +23,21 @@ export function AnimatedRing({
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center gap-2">
       <div className="relative" style={{ width: size, height: size }}>
-        <svg width={size} height={size} className="transform -rotate-90">
+        <svg width={size} height={size} className="-rotate-90">
           <circle
             cx={size / 2}
             cy={size / 2}
             r={radius}
-            className="stroke-slate-100 fill-none"
+            className="stroke-border fill-none"
             strokeWidth={strokeWidth}
           />
           <circle
             cx={size / 2}
             cy={size / 2}
             r={radius}
-            className={`fill-none transition-all duration-1000 ease-out ${colorClass}`}
+            className={`fill-none transition-all duration-700 ease-out ${colorClass}`}
             strokeWidth={strokeWidth}
             strokeDasharray={circumference}
             strokeDashoffset={strokeDashoffset}
@@ -45,11 +45,11 @@ export function AnimatedRing({
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-xl font-bold">{progress}</span>
-          <span className="text-xs text-slate-500">/ {goal}</span>
+          <span className="text-sm font-semibold leading-none">{progress}</span>
+          <span className="text-[10px] text-muted leading-none mt-0.5">/{goal}</span>
         </div>
       </div>
-      <span className="mt-2 text-sm font-medium text-slate-600">{label}</span>
+      <span className="text-xs text-muted">{label}</span>
     </div>
   );
 }
